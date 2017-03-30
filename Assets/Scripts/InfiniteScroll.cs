@@ -339,7 +339,7 @@ public abstract class InfiniteScroll : ScrollRect
                         cc._name = User["first_name"].ToString()+" "+ i.ToString();
 
                         cc._Surname = User["last_name"].ToString() + " " + i.ToString();
-                        cc._profilURL = User["avatar"].ToString();
+                        cc._profilURL = @"https://randomuser.me/api/portraits/men/"+ UnityEngine.Random.Range(0,100)+".jpg";
                         i++;
                         
                         // print("Adding User ID =" + c._ID);
