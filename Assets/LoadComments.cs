@@ -4,20 +4,6 @@ using UnityEngine;
 using System;
 using System.Collections.ObjectModel;
 
-[Serializable]
-public class Comment
-{
-    [SerializeField]
-   public int postId;
-    [SerializeField]
-    public int id;
-    [SerializeField]
-    public string name;
-    [SerializeField]
-    public string email;
-    [SerializeField]
-    public string body;
-}
 
 
 public class JsonHelper
@@ -37,7 +23,7 @@ public class JsonHelper
 }
 
 public class LoadComments : MonoBehaviour {
-    public Comment[] Comments;
+ 
     // Use this for initialization
     IEnumerator Start () {
 
@@ -46,7 +32,7 @@ public class LoadComments : MonoBehaviour {
         WWW www = new WWW("https://jsonplaceholder.typicode.com/comments");
         yield return www;
         Debug.Log(www.text.Length);
- Comments = JsonHelper.getJsonArray<Comment>(www.text);
+ //Comments = JsonHelper.getJsonArray<Comment>(www.text);
 
 
     }

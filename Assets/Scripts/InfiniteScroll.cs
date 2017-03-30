@@ -89,7 +89,7 @@ public abstract class InfiniteScroll : ScrollRect
     public float e;
     public float f;
     public float g;
-
+    int i = 0;
     public float VelocityY = 0;
     private void FixedUpdate()
     {
@@ -121,7 +121,7 @@ public abstract class InfiniteScroll : ScrollRect
            // PreparePages();
             //margin is used to Destroy objects. We add them at half the margin (if we do it at full margin, we continuously add and delete objects)
         }
-        else if ( c<d)
+        else if ( c<d-200)
         {
 
             //load element at Start
@@ -140,8 +140,9 @@ public abstract class InfiniteScroll : ScrollRect
         {
 
             //Looping through all items.
-            foreach (RectTransform child in content)
+            for (i=0;i<content.childCount;i++)
             {
+                RectTransform child = content.GetChild(i).GetComponent<RectTransform>();
                 //Item position refer to Content 
                 e = GetPos(child); 
                 //ScrollRect top pos
@@ -155,38 +156,53 @@ public abstract class InfiniteScroll : ScrollRect
                 if (!child.gameObject.activeSelf)
                     continue;
                 //We Destroy an item from the end if it's too far
-                if (e > 600)
+                if (e > f-600)
                 {
-                    // Destroy(child.gameObject);
-                    RecycleContacts.Enqueue(child.gameObject);
-                    child.gameObject.name = "RecycleContacts "+ RecycleContacts.Count;
-                    child.SetAsFirstSibling();
-                    child.gameObject.SetActive(false);
 
-                    AtStartID++;
-                    //We update the container position, since after we delete something from the top, the container moves all of it's content up
-                    content.localPosition -= (Vector3)GetVector(GetSize(child));
-                    dragOffset -= GetVector(GetSize(child));
-                    Add(ref itemTypeStart);
+                    recycleUpItems(ref child);
+                  
+
                 }
                 else if (e < g-600)
                 {
-                    AtEndID--;
-                    //   Destroy(child.gameObject);
-                    RecycleContacts.Enqueue(child.gameObject);
-                    child.gameObject.name = "RecycleContacts " + RecycleContacts.Count;
-                    child.SetAsLastSibling();
-
-                    child.gameObject.SetActive(false);
-
-                    Subtract(ref itemTypeEnd);
+                    recycleDownItems( ref child);
+                        
+                   
+                   
+                   
                 }
             }
         }
     }
 
+    private void recycleUpItems(ref RectTransform child)
+    {
+        RecycleContacts.Enqueue(child.gameObject);
+        child.gameObject.name = "RecycleContacts " + RecycleContacts.Count;
+        child.SetAsFirstSibling();
+        child.gameObject.SetActive(false);
 
-   public Queue<GameObject> RecycleContacts = new Queue<GameObject>();
+        //We update the container position, since after we delete something from the top, the container moves all of it's content up
+        content.localPosition -= (Vector3)GetVector(GetSize(child));
+        dragOffset -= GetVector(GetSize(child));
+        AtStartID++;
+        if (i > 0)
+            i--;
+    }
+
+    private void recycleDownItems( ref RectTransform child)
+    {
+        RecycleContacts.Enqueue(child.gameObject);
+        child.gameObject.name = "RecycleContacts " + RecycleContacts.Count;
+        child.SetAsLastSibling();
+
+        child.gameObject.SetActive(false);
+        AtEndID--;
+        if (i > 0)
+            i--;
+    }
+
+    public Queue<GameObject> RecycleContacts = new Queue<GameObject>();
    
 
     private RectTransform NewItemAtStart()
@@ -234,8 +250,7 @@ public abstract class InfiniteScroll : ScrollRect
             newItem.GetComponent<Data>().ID = AtEndID;
             newItem.name = AtEndID.ToString();
 
-            if (AtEndID < totalUsersCount)
-                AtEndID++;
+            
 
             if (!Contacts.ContainsKey(AtEndID + 10) && Contacts.Count < totalUsersCount && AtEndID < totalUsersCount)
             {
@@ -243,7 +258,8 @@ public abstract class InfiniteScroll : ScrollRect
                 GetPages(currentpage);
 
             }
-
+if (AtEndID < totalUsersCount)
+                AtEndID++;
         }
         else
         {
@@ -461,8 +477,7 @@ public abstract class InfiniteScroll : ScrollRect
         nextItem.transform.SetParent(content.transform, false);
         nextItem.gameObject.SetActive(true);
         nextItem.GetComponent<Data>().ID = AtEndID;
-       if(AtEndID<totalUsersCount)
-        AtEndID++;
+     
 
         if (!Contacts.ContainsKey(AtEndID+10) && Contacts.Count< totalUsersCount && AtEndID<totalUsersCount)
         {
@@ -470,6 +485,9 @@ public abstract class InfiniteScroll : ScrollRect
             GetPages(currentpage);
 
         }
+        if (AtEndID<totalUsersCount)
+        AtEndID++;
+
         return nextItem;
     }
 

@@ -10,7 +10,7 @@ public class Contact
     public int _ID;
     public string _name;
     public string _Surname;
-
+    public bool _Visible;
     public string _profilURL;
 
 
